@@ -347,6 +347,7 @@ export default class {
 
         const track = new Track();
         track.src = info.src;
+        track.spectrogramsrc = info.spectrogramsrc;
         track.setBuffer(audioBuffer);
         track.setName(name);
         track.setEventEmitter(this.ee);
@@ -387,6 +388,7 @@ export default class {
         }
 
         // extract peaks with AudioContext for now.
+        this.samplesPerPixel = audioBuffer.duration < 40 ? 2000 : (audioBuffer.duration < 60 ? 3400 : 4000)
         track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
 
         return track;
@@ -560,6 +562,7 @@ export default class {
       (duration, track) => Math.max(duration, track.getEndTime()),
       0,
     );
+    this.samplesPerPixel = this.duration < 40 ? 2000 : (this.duration < 60 ? 3400 : 4000)
   }
 
   shouldTrackPlay(track) {
@@ -900,7 +903,7 @@ export default class {
     return h('div.playlist',
       {
         attributes: {
-          style: 'overflow: hidden; position: relative;',
+          style: 'overflow: hidden; position: relative; background: white;',
         },
       },
       containerChildren,

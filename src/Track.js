@@ -349,6 +349,22 @@ export default class {
     return h(`div.playlist-overlay${overlayClass}`, config);
   }
 
+  renderSpectrogram(data) {
+
+    const channelPixels = secondsToPixels(data.playlistLength, data.resolution, data.sampleRate);
+
+    const config = {
+      attributes: {
+        style: `position: absolute; top: ${data.height}px; right: 0; bottom: 0; left: -40px; width: ${channelPixels}px; z-index: 4;`,
+      },
+    };
+
+    // spectrogram
+    return h(`div.playlist-spectrogram`, config, [
+        h('img', {src:this.spectrogramsrc}),
+      ]);
+  }
+
   renderControls(data) {
     const muteClass = data.muted ? '.active' : '';
     const soloClass = data.soloed ? '.active' : '';
@@ -522,6 +538,7 @@ export default class {
 
     waveformChildren.push(channels);
     waveformChildren.push(this.renderOverlay(data));
+    waveformChildren.push(this.renderSpectrogram(data));
 
     // draw cursor selection on active track.
     if (data.isActive === true) {
@@ -540,7 +557,7 @@ export default class {
     const waveform = h('div.waveform',
       {
         attributes: {
-          style: `height: ${numChan * data.height}px; position: relative;`,
+          style: `height: ${2 * numChan * data.height}px; position: relative;`,
         },
       },
       waveformChildren,
@@ -562,7 +579,7 @@ export default class {
     return h(`div.channel-wrapper${audibleClass}${customClass}`,
       {
         attributes: {
-          style: `margin-left: ${channelMargin}px; height: ${data.height * numChan}px;`,
+          style: `margin-left: ${channelMargin}px; height: ${data.height * numChan * 2}px;`,
         },
       },
       channelChildren,
